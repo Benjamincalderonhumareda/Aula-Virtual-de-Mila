@@ -3,44 +3,51 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 
 <title>Aula Aesthetic de Mila 💖</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-  body {
-    font-family: Inter, sans-serif;
-    background: linear-gradient(135deg, #fdf2f8, #ede9fe, #f0fdf4);
-  }
+body {
+  font-family: Inter, sans-serif;
+  background: linear-gradient(135deg, #fdf2f8, #ede9fe, #f0fdf4);
+}
 
-  .glass {
-    backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.6);
-  }
+.glass {
+  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.6);
+}
 
-  .card {
-    transition: all 0.3s ease;
-  }
+.card {
+  transition: all 0.3s ease;
+}
 
-  .card:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  }
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
 
-  .btn:active {
-    transform: scale(0.95);
-  }
+button {
+  transition: all 0.2s ease;
+}
 
-  .fade {
-    animation: fadeIn 0.4s ease;
-  }
+button:hover {
+  transform: translateY(-2px);
+}
 
-  @keyframes fadeIn {
-    from {opacity:0; transform: translateY(10px);}
-    to {opacity:1; transform: translateY(0);}
-  }
+button:active {
+  transform: scale(0.95);
+}
+
+.fade {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(10px);}
+  to {opacity:1; transform: translateY(0);}
+}
 </style>
 </head>
 
@@ -48,232 +55,258 @@
 
 <div class="flex h-screen">
 
-  <!-- SIDEBAR -->
-  <aside class="w-64 glass p-6 hidden md:flex flex-col rounded-r-2xl">
+<!-- SIDEBAR -->
+<aside class="w-64 glass p-6 hidden md:flex flex-col rounded-r-2xl">
 
-    <h1 class="text-xl font-semibold mb-10 text-pink-500">💖 Aula de Mila</h1>
+<h1 class="text-xl font-semibold mb-6 text-pink-500">💖 Aula de Mila</h1>
 
-    <nav class="space-y-3">
-      <button onclick="mostrar('dashboard', this)"
-        class="nav-item w-full text-left px-4 py-2 rounded-xl bg-pink-200 text-pink-700">
-        🌸 Dashboard
-      </button>
+<button id="installBtn" class="bg-pink-400 text-white p-2 rounded-xl mb-3 hidden">
+📲 Instalar app
+</button>
 
-      <button onclick="mostrar('cursos', this)"
-        class="nav-item w-full text-left px-4 py-2 rounded-xl hover:bg-pink-100">
-        📚 Cursos
-      </button>
+<button onclick="activarNotificaciones()" class="bg-green-400 text-white p-2 rounded-xl mb-3">
+🔔 Notificaciones
+</button>
 
-      <button onclick="mostrar('tareas', this)"
-        class="nav-item w-full text-left px-4 py-2 rounded-xl hover:bg-pink-100">
-        ✅ Tareas
-      </button>
-    </nav>
+<button onclick="exportarDatos()" class="bg-blue-400 text-white p-2 rounded-xl mb-3">
+💾 Exportar
+</button>
 
-  </aside>
+<input type="file" onchange="importarDatos(event)" class="mb-6">
 
-  <!-- CONTENIDO -->
-  <main class="flex-1 p-10 overflow-y-auto">
+<nav class="space-y-3">
+<button onclick="mostrar('dashboard', this)" class="nav-item bg-pink-200 px-4 py-2 rounded-xl">🌸 Dashboard</button>
+<button onclick="mostrar('cursos', this)" class="nav-item px-4 py-2 rounded-xl">📚 Cursos</button>
+<button onclick="mostrar('tareas', this)" class="nav-item px-4 py-2 rounded-xl">✅ Tareas</button>
+</nav>
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="fade">
-      <h2 class="text-3xl font-bold mb-8 text-pink-500">✨ Dashboard</h2>
-      <div id="resumen" class="grid md:grid-cols-3 gap-6"></div>
-    </section>
+</aside>
 
-    <!-- CURSOS -->
-    <section id="cursos" class="hidden">
-      <h2 class="text-3xl font-bold mb-8 text-pink-500">📚 Cursos</h2>
+<!-- CONTENIDO -->
+<main class="flex-1 p-8 overflow-y-auto">
 
-      <div class="flex gap-3 mb-8">
-        <input id="cursoInput" placeholder="Nuevo curso ✨"
-          class="flex-1 border border-pink-200 rounded-xl px-4 py-3 bg-white/70">
+<section id="dashboard">
+<h2 class="text-2xl font-bold mb-6 text-pink-500">Dashboard</h2>
+<div id="resumen" class="grid md:grid-cols-3 gap-4"></div>
+</section>
 
-        <button onclick="agregarCurso()"
-          class="btn bg-pink-400 text-white px-6 rounded-xl hover:bg-pink-500 shadow">
-          Crear
-        </button>
-      </div>
+<section id="cursos" class="hidden">
+<h2 class="text-2xl font-bold mb-6 text-pink-500">Cursos</h2>
 
-      <div id="listaCursos"></div>
-    </section>
+<div class="flex gap-2 mb-4">
+<input id="cursoInput" class="flex-1 border rounded p-2" placeholder="Nuevo curso">
+<button onclick="agregarCurso()" class="bg-pink-400 text-white px-4 rounded">Crear</button>
+</div>
 
-    <!-- TAREAS -->
-    <section id="tareas" class="hidden">
-      <h2 class="text-3xl font-bold mb-8 text-pink-500">💗 Tareas</h2>
+<div id="listaCursos"></div>
+</section>
 
-      <div class="flex gap-3 mb-8">
-        <input id="tareaInput" placeholder="Nueva tarea 💖"
-          class="flex-1 border border-pink-200 rounded-xl px-4 py-3 bg-white/70">
+<section id="tareas" class="hidden">
+<h2 class="text-2xl font-bold mb-6 text-pink-500">Tareas</h2>
 
-        <input id="fechaInput" type="date"
-          class="border border-pink-200 rounded-xl px-4 py-3 bg-white/70">
+<div class="flex gap-2 mb-4">
+<input id="tareaInput" class="flex-1 border rounded p-2" placeholder="Tarea">
+<input id="fechaInput" type="date" class="border p-2">
+<button onclick="agregarTarea()" class="bg-pink-400 text-white px-4 rounded">Agregar</button>
+</div>
 
-        <button onclick="agregarTarea()"
-          class="btn bg-pink-400 text-white px-6 rounded-xl hover:bg-pink-500 shadow">
-          Crear
-        </button>
-      </div>
+<div id="listaTareas"></div>
+</section>
 
-      <div id="listaTareas"></div>
-    </section>
-
-  </main>
+</main>
 </div>
 
 <script>
 let cursos = JSON.parse(localStorage.getItem("cursos")) || [];
 let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
 
-/* NAV */
-function mostrar(seccion, btn){
-  ["dashboard","cursos","tareas"].forEach(id=>{
-    const el = document.getElementById(id);
-    el.classList.add("hidden");
-    el.classList.remove("fade");
-  });
-
-  const activo = document.getElementById(seccion);
-  activo.classList.remove("hidden");
-
-  setTimeout(()=> activo.classList.add("fade"), 10);
-
-  document.querySelectorAll(".nav-item").forEach(b=>{
-    b.classList.remove("bg-pink-200","text-pink-700");
-  });
-
-  btn.classList.add("bg-pink-200","text-pink-700");
+function mostrar(sec){
+document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+document.getElementById(sec).classList.remove("hidden");
 }
 
 /* CURSOS */
 function agregarCurso(){
-  const val = document.getElementById("cursoInput").value;
-  if(!val) return;
-
-  cursos.push({nombre: val, apuntes: []});
-  guardar();
-  renderCursos();
+let val = cursoInput.value;
+if(!val) return;
+cursos.push({nombre:val, apuntes:[]});
+guardar();
+renderCursos();
 }
 
 function agregarApunte(i){
-  const input = document.getElementById(`ap-${i}`);
-  if(!input.value) return;
+let input = document.getElementById("ap-"+i);
+if(!input.value) return;
 
-  cursos[i].apuntes.push(input.value);
-  guardar();
-  renderCursos();
+cursos[i].apuntes.push({texto:input.value,archivo:null});
+input.value="";
+guardar();
+renderCursos();
+}
+
+function subirArchivo(e,i){
+let file = e.target.files[0];
+let reader = new FileReader();
+
+reader.onload = function(ev){
+cursos[i].apuntes.push({
+texto:file.name,
+archivo:{data:ev.target.result,tipo:file.type}
+});
+guardar();
+renderCursos();
+}
+reader.readAsDataURL(file);
+}
+
+function editarApunte(i,j,texto){
+cursos[i].apuntes[j].texto = texto;
+guardar();
+}
+
+function eliminarApunte(i,j){
+cursos[i].apuntes.splice(j,1);
+guardar();
+renderCursos();
 }
 
 function renderCursos(){
-  const cont = document.getElementById("listaCursos");
-  cont.innerHTML="";
+let cont = listaCursos;
+cont.innerHTML="";
 
-  cursos.forEach((c,i)=>{
-    cont.innerHTML+=`
-      <div class="card glass p-6 mb-5 rounded-2xl fade">
-        <h3 class="font-semibold text-lg mb-4 text-pink-500">${c.nombre}</h3>
+cursos.forEach((c,i)=>{
+cont.innerHTML += `
+<div class="glass p-4 mb-4 rounded-xl">
 
-        <div class="flex gap-2 mb-4">
-          <input id="ap-${i}" placeholder="Agregar apunte ✨"
-            class="flex-1 border border-pink-200 rounded-lg px-3 py-2 bg-white/70">
+<h3 class="text-pink-500 font-bold mb-2">${c.nombre}</h3>
 
-          <button onclick="agregarApunte(${i})"
-            class="btn bg-pink-200 text-pink-700 px-4 rounded-lg hover:bg-pink-300">
-            +
-          </button>
-        </div>
+<div class="flex gap-2 mb-2">
+<input id="ap-${i}" class="flex-1 border p-2 rounded" placeholder="Apunte" onkeypress="if(event.key==='Enter') agregarApunte(${i})">
+<button onclick="agregarApunte(${i})">+</button>
+</div>
 
-        <ul class="text-gray-600 space-y-1">
-          ${c.apuntes.map(a=>`<li>• ${a}</li>`).join("")}
-        </ul>
-      </div>
-    `;
-  });
+<input type="file" onchange="subirArchivo(event,${i})">
+
+${c.apuntes.map((a,j)=>`
+<div class="bg-white p-3 mt-2 rounded">
+<div contenteditable onblur="editarApunte(${i},${j},this.innerText)">
+${a.texto}
+</div>
+
+${a.archivo ? (a.archivo.tipo.startsWith("image")
+? `<img src="${a.archivo.data}" class="mt-2">`
+: `<a href="${a.archivo.data}" download>📄 Descargar</a>`) : ""}
+
+<button onclick="eliminarApunte(${i},${j})" class="text-red-400">Eliminar</button>
+</div>
+`).join("")}
+
+</div>`;
+});
 }
 
 /* TAREAS */
 function agregarTarea(){
-  const t = document.getElementById("tareaInput").value;
-  const f = document.getElementById("fechaInput").value;
+let t = tareaInput.value;
+let f = fechaInput.value;
+if(!t||!f) return;
 
-  if(!t || !f) return;
-
-  tareas.push({texto:t, fecha:f, hecho:false});
-  guardar();
-  renderTareas();
+tareas.push({texto:t,fecha:f,hecho:false});
+guardar();
+renderTareas();
 }
 
 function toggleTarea(i){
-  tareas[i].hecho = !tareas[i].hecho;
-  guardar();
-  renderTareas();
+tareas[i].hecho=!tareas[i].hecho;
+guardar();
+renderTareas();
 }
 
 function renderTareas(){
-  const cont = document.getElementById("listaTareas");
-  cont.innerHTML="";
+listaTareas.innerHTML="";
 
-  tareas.forEach((t,i)=>{
-    cont.innerHTML+=`
-      <div class="card glass p-5 mb-4 rounded-2xl flex justify-between items-center fade">
-        <div class="${t.hecho ? "line-through text-gray-400" : ""}">
-          <p class="font-medium">${t.texto}</p>
-          <span class="text-sm text-gray-500">${t.fecha}</span>
-        </div>
+tareas.forEach((t,i)=>{
+listaTareas.innerHTML+=`
+<div class="bg-white p-3 mb-2 rounded flex justify-between">
+<div>${t.texto} <br><small>${t.fecha}</small></div>
+<button onclick="toggleTarea(${i})">✔</button>
+</div>`;
+});
 
-        <button onclick="toggleTarea(${i})"
-          class="btn bg-green-100 text-green-600 px-3 py-1 rounded-lg hover:bg-green-200">
-          ✔
-        </button>
-      </div>
-    `;
-  });
+revisarTareasHoy();
+}
 
-  renderDashboard();
+/* NOTIFICACIONES */
+function activarNotificaciones(){
+Notification.requestPermission();
+}
+
+function revisarTareasHoy(){
+let hoy = new Date().toISOString().split("T")[0];
+tareas.forEach(t=>{
+if(t.fecha===hoy && !t.hecho){
+new Notification("📚 Tarea pendiente",{body:t.texto});
+}
+});
+}
+
+/* BACKUP */
+function exportarDatos(){
+let data = JSON.stringify({cursos,tareas});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob([data]));
+a.download="backup.json";
+a.click();
+}
+
+function importarDatos(e){
+let file=e.target.files[0];
+let reader=new FileReader();
+reader.onload=function(ev){
+let data=JSON.parse(ev.target.result);
+cursos=data.cursos||[];
+tareas=data.tareas||[];
+guardar();
+renderCursos();
+renderTareas();
+}
+reader.readAsText(file);
 }
 
 /* DASHBOARD */
 function renderDashboard(){
-  const hoy = new Date().toISOString().split("T")[0];
-
-  document.getElementById("resumen").innerHTML=`
-    <div class="card glass p-6 rounded-2xl">
-      <p class="text-gray-600">Cursos</p>
-      <h3 class="text-3xl font-bold text-pink-500">${cursos.length}</h3>
-    </div>
-
-    <div class="card glass p-6 rounded-2xl">
-      <p class="text-gray-600">Pendientes</p>
-      <h3 class="text-3xl font-bold text-green-500">
-        ${tareas.filter(t=>!t.hecho).length}
-      </h3>
-    </div>
-
-    <div class="card glass p-6 rounded-2xl">
-      <p class="text-gray-600">Hoy</p>
-      <h3 class="text-3xl font-bold text-red-400">
-        ${tareas.filter(t=>t.fecha===hoy && !t.hecho).length}
-      </h3>
-    </div>
-  `;
+resumen.innerHTML=`
+<div class="bg-white p-4 rounded">Cursos: ${cursos.length}</div>
+<div class="bg-white p-4 rounded">Pendientes: ${tareas.filter(t=>!t.hecho).length}</div>
+`;
 }
 
-/* GUARDAR */
+/* SAVE */
 function guardar(){
-  localStorage.setItem("cursos", JSON.stringify(cursos));
-  localStorage.setItem("tareas", JSON.stringify(tareas));
+localStorage.setItem("cursos",JSON.stringify(cursos));
+localStorage.setItem("tareas",JSON.stringify(tareas));
 }
+
+/* INSTALL BUTTON */
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt",(e)=>{
+e.preventDefault();
+deferredPrompt=e;
+installBtn.classList.remove("hidden");
+});
+
+installBtn.onclick=()=>{
+deferredPrompt.prompt();
+};
 
 /* INIT */
 renderCursos();
 renderTareas();
 renderDashboard();
-</script>
 
-<!-- ✅ SERVICE WORKER CORRECTO -->
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js?v=2");
+/* SERVICE WORKER */
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("service-worker.js?v=5");
 }
 </script>
 
