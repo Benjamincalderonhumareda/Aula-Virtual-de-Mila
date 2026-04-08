@@ -1,314 +1,136 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-
-<link rel="manifest" href="manifest.json">
-
-<title>Aula Aesthetic de Mila 💖</title>
-<script src="https://cdn.tailwindcss.com"></script>
-
-<style>
-body {
-  font-family: Inter, sans-serif;
-  background: linear-gradient(135deg, #fdf2f8, #ede9fe, #f0fdf4);
-}
-
-.glass {
-  backdrop-filter: blur(12px);
-  background: rgba(255,255,255,0.6);
-}
-
-.card {
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-}
-
-button {
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-
-button:active {
-  transform: scale(0.95);
-}
-
-.fade {
-  animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from {opacity:0; transform: translateY(10px);}
-  to {opacity:1; transform: translateY(0);}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <title id="tituloApp">Aula Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link rel="stylesheet" href="styles.css">
 </head>
+<body class="bg-pink-50 transition-all duration-500 dark:bg-slate-900">
 
-<body class="text-gray-800">
+    <div id="loginScreen" class="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-slate-900 transition-all">
+        <div class="p-8 w-80 text-center shadow-2xl border-2 border-pink-100 dark:border-slate-700 rounded-3xl bg-white dark:bg-slate-800">
+            <div id="accountSelector">
+                <span class="text-4xl">🎓</span>
+                <h2 class="text-2xl font-bold mt-2 text-gray-700 dark:text-white">Bienvenido</h2>
+                <p class="text-xs text-gray-500 mb-6 italic">Selecciona tu cuenta</p>
+                <div class="space-y-3">
+                    <button onclick="prepararLogin('mila')" class="w-full flex items-center p-3 rounded-xl border border-pink-200 hover:bg-pink-50 transition-all bg-white dark:bg-slate-700 dark:hover:bg-slate-600 dark:border-slate-600">
+                        <span class="bg-pink-100 p-2 rounded-full mr-3 text-lg">💖</span>
+                        <p class="font-bold text-sm text-gray-800 dark:text-white">Mila</p>
+                    </button>
+                    <button onclick="prepararLogin('benjamin')" class="w-full flex items-center p-3 rounded-xl border border-blue-200 hover:bg-blue-50 transition-all bg-white dark:bg-slate-700 dark:hover:bg-slate-600 dark:border-slate-600">
+                        <span class="bg-blue-100 p-2 rounded-full mr-3 text-lg">💙</span>
+                        <p class="font-bold text-sm text-gray-800 dark:text-white">Benjamin</p>
+                    </button>
+                </div>
+            </div>
+            <div id="passwordArea" class="hidden">
+                <button onclick="volverASeleccion()" class="text-xs text-gray-400 mb-4 underline">← Cambiar cuenta</button>
+                <h3 id="userDisplay" class="font-bold text-lg mb-2 text-pink-600"></h3>
+                <input type="password" id="passInput" class="w-full p-3 rounded-xl text-center mb-3 border outline-none dark:bg-slate-700 dark:text-white dark:border-slate-600" placeholder="Contraseña">
+                <button onclick="validarPassword()" class="w-full p-3 rounded-xl bg-pink-500 text-white font-bold hover:bg-pink-600 transition-all">Entrar</button>
+                <p id="passError" class="text-red-500 text-[10px] mt-2 hidden font-bold">⚠️ Contraseña incorrecta</p>
+            </div>
+        </div>
+    </div>
 
-<div class="flex h-screen">
+    <div class="flex h-screen">
+        
+        <aside class="w-64 p-6 hidden md:flex flex-col bg-white border-r border-pink-100 dark:bg-slate-800 dark:border-slate-700">
+            <h1 id="nombreApp" class="text-xl font-bold text-pink-500 mb-8 italic text-center">💖 Aula Virtual</h1>
+            <nav class="space-y-3">
+                <button onclick="mostrar('dashboard')" class="w-full p-3 rounded-xl text-left text-sm font-semibold hover:bg-pink-50 dark:hover:bg-slate-700 dark:text-white transition-all">📊 Dashboard</button>
+                <button onclick="mostrar('cursos')" class="w-full p-3 rounded-xl text-left text-sm font-semibold hover:bg-pink-50 dark:hover:bg-slate-700 dark:text-white transition-all">📚 Cursos</button>
+                <button onclick="mostrar('tareas')" class="w-full p-3 rounded-xl text-left text-sm font-semibold hover:bg-pink-50 dark:hover:bg-slate-700 dark:text-white transition-all">✅ Tareas</button>
+                <button onclick="cerrarSesion()" class="w-full p-3 mt-10 rounded-xl text-left text-xs font-bold text-gray-400 hover:text-red-500">👤 Salir</button>
+            </nav>
+        </aside>
 
-<!-- SIDEBAR -->
-<aside class="w-64 glass p-6 hidden md:flex flex-col rounded-r-2xl">
+        <main id="mainContent" class="flex-1 p-6 overflow-y-auto bg-pink-50/30 dark:bg-slate-900 relative">
+            
+            <button onclick="cerrarSesion()" class="md:hidden absolute top-4 right-4 z-50 bg-white/80 dark:bg-slate-800 p-2 rounded-full shadow-sm border border-pink-100 dark:border-slate-700">
+                <span class="text-sm font-bold text-pink-600 dark:text-blue-400">👤 Salir</span>
+            </button>
 
-<h1 class="text-xl font-semibold mb-6 text-pink-500">💖 Aula de Mila</h1>
+            <section id="dashboard" class="animate-fade-in">
+                <h2 class="text-2xl font-bold mb-6 dark:text-white">Dashboard</h2>
+                <div id="resumen" class="grid grid-cols-2 gap-4 mb-8"></div>
+                <div id="accesoDirectoCursos" class="hidden">
+                    <h3 class="font-bold mb-4 text-gray-600 dark:text-gray-400">📖 Mis Cursos</h3>
+                    <div id="listaCursosDirectos" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+            </section>
 
-<button id="installBtn" class="bg-pink-400 text-white p-2 rounded-xl mb-3 hidden">
-📲 Instalar app
-</button>
+            <section id="cursos" class="hidden animate-fade-in">
+                <h2 class="text-2xl font-bold mb-4 dark:text-white">Cursos</h2>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border mb-6 dark:bg-slate-800 dark:border-slate-700">
+                    <input id="cursoInput" class="w-full p-3 rounded-xl mb-3 border dark:bg-slate-700 dark:text-white dark:border-slate-600 outline-none" placeholder="Nombre del curso">
+                    <button onclick="agregarCurso()" class="btn-main px-6 py-2">Crear curso</button>
+                </div>
+                <div id="listaCursos" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
 
-<button onclick="activarNotificaciones()" class="bg-green-400 text-white p-2 rounded-xl mb-3">
-🔔 Notificaciones
-</button>
+            <section id="semanas" class="hidden animate-fade-in">
+                <button onclick="mostrar('cursos')" class="text-pink-500 mb-4 block underline text-sm font-bold">← Volver</button>
+                <h2 id="tituloCurso" class="text-2xl font-bold mb-4 dark:text-white"></h2>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border mb-6 dark:bg-slate-800 dark:border-slate-700">
+                    <input id="semanaInput" class="input w-full p-3 rounded-xl mb-3 outline-none" placeholder="Nombre: Semana 01">
+                    <button onclick="agregarSemana()" class="btn-main w-full py-2">Añadir Semana</button>
+                </div>
+                <div id="listaSemanas" class="space-y-3"></div>
+            </section>
 
-<button onclick="exportarDatos()" class="bg-blue-400 text-white p-2 rounded-xl mb-3">
-💾 Exportar
-</button>
+            <section id="apuntes" class="hidden animate-fade-in">
+                <button onclick="mostrar('semanas')" class="text-pink-500 mb-4 block underline text-sm font-bold">← Volver</button>
+                <h2 id="tituloSemana" class="text-2xl font-bold mb-4 dark:text-white text-pink-600"></h2>
+                <button onclick="agregarSeccion()" class="btn-main w-full py-4 mb-6 shadow-lg">+ Nueva Sección</button>
+                <div id="listaApuntes" class="space-y-6"></div>
+            </section>
 
-<input type="file" onchange="importarDatos(event)" class="mb-6">
+            <section id="tareas" class="hidden animate-fade-in">
+                <h2 class="text-2xl font-bold mb-4 dark:text-white">Tareas</h2>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border mb-6 dark:bg-slate-800 dark:border-slate-700">
+                    <input id="tareaInput" class="w-full p-3 rounded-xl mb-2 border dark:bg-slate-700 dark:text-white dark:border-slate-600 outline-none" placeholder="¿Qué hay que hacer?">
+                    <input id="fechaInput" type="datetime-local" class="w-full p-3 rounded-xl mb-3 border dark:bg-slate-700 dark:text-white dark:border-slate-600">
+                    <button onclick="agregarTarea()" class="btn-main w-full py-3">Agregar tarea</button>
+                </div>
+                <div id="listaTareas" class="space-y-3"></div>
+            </section>
+        </main>
 
-<nav class="space-y-3">
-<button onclick="mostrar('dashboard', this)" class="nav-item bg-pink-200 px-4 py-2 rounded-xl">🌸 Dashboard</button>
-<button onclick="mostrar('cursos', this)" class="nav-item px-4 py-2 rounded-xl">📚 Cursos</button>
-<button onclick="mostrar('tareas', this)" class="nav-item px-4 py-2 rounded-xl">✅ Tareas</button>
-</nav>
+        <div class="tab-bar">
+            <button onclick="mostrar('dashboard')" class="text-2xl">📊</button>
+            <button onclick="mostrar('cursos')" class="text-2xl">📚</button>
+            <button onclick="mostrar('tareas')" class="text-2xl">✅</button>
+        </div>
+    </div>
 
-</aside>
+    <script src="app.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="cursos.js"></script>
+    <script src="tareas.js"></script>
+    <script src="apuntes.js"></script>
 
-<!-- CONTENIDO -->
-<main class="flex-1 p-8 overflow-y-auto">
-
-<section id="dashboard">
-<h2 class="text-2xl font-bold mb-6 text-pink-500">Dashboard</h2>
-<div id="resumen" class="grid md:grid-cols-3 gap-4"></div>
-</section>
-
-<section id="cursos" class="hidden">
-<h2 class="text-2xl font-bold mb-6 text-pink-500">Cursos</h2>
-
-<div class="flex gap-2 mb-4">
-<input id="cursoInput" class="flex-1 border rounded p-2" placeholder="Nuevo curso">
-<button onclick="agregarCurso()" class="bg-pink-400 text-white px-4 rounded">Crear</button>
-</div>
-
-<div id="listaCursos"></div>
-</section>
-
-<section id="tareas" class="hidden">
-<h2 class="text-2xl font-bold mb-6 text-pink-500">Tareas</h2>
-
-<div class="flex gap-2 mb-4">
-<input id="tareaInput" class="flex-1 border rounded p-2" placeholder="Tarea">
-<input id="fechaInput" type="date" class="border p-2">
-<button onclick="agregarTarea()" class="bg-pink-400 text-white px-4 rounded">Agregar</button>
-</div>
-
-<div id="listaTareas"></div>
-</section>
-
-</main>
-</div>
-
-<script>
-let cursos = JSON.parse(localStorage.getItem("cursos")) || [];
-let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
-
-function mostrar(sec){
-document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-document.getElementById(sec).classList.remove("hidden");
-}
-
-/* CURSOS */
-function agregarCurso(){
-let val = cursoInput.value;
-if(!val) return;
-cursos.push({nombre:val, apuntes:[]});
-guardar();
-renderCursos();
-}
-
-function agregarApunte(i){
-let input = document.getElementById("ap-"+i);
-if(!input.value) return;
-
-cursos[i].apuntes.push({texto:input.value,archivo:null});
-input.value="";
-guardar();
-renderCursos();
-}
-
-function subirArchivo(e,i){
-let file = e.target.files[0];
-let reader = new FileReader();
-
-reader.onload = function(ev){
-cursos[i].apuntes.push({
-texto:file.name,
-archivo:{data:ev.target.result,tipo:file.type}
-});
-guardar();
-renderCursos();
-}
-reader.readAsDataURL(file);
-}
-
-function editarApunte(i,j,texto){
-cursos[i].apuntes[j].texto = texto;
-guardar();
-}
-
-function eliminarApunte(i,j){
-cursos[i].apuntes.splice(j,1);
-guardar();
-renderCursos();
-}
-
-function renderCursos(){
-let cont = listaCursos;
-cont.innerHTML="";
-
-cursos.forEach((c,i)=>{
-cont.innerHTML += `
-<div class="glass p-4 mb-4 rounded-xl">
-
-<h3 class="text-pink-500 font-bold mb-2">${c.nombre}</h3>
-
-<div class="flex gap-2 mb-2">
-<input id="ap-${i}" class="flex-1 border p-2 rounded" placeholder="Apunte" onkeypress="if(event.key==='Enter') agregarApunte(${i})">
-<button onclick="agregarApunte(${i})">+</button>
-</div>
-
-<input type="file" onchange="subirArchivo(event,${i})">
-
-${c.apuntes.map((a,j)=>`
-<div class="bg-white p-3 mt-2 rounded">
-<div contenteditable onblur="editarApunte(${i},${j},this.innerText)">
-${a.texto}
-</div>
-
-${a.archivo ? (a.archivo.tipo.startsWith("image")
-? `<img src="${a.archivo.data}" class="mt-2">`
-: `<a href="${a.archivo.data}" download>📄 Descargar</a>`) : ""}
-
-<button onclick="eliminarApunte(${i},${j})" class="text-red-400">Eliminar</button>
-</div>
-`).join("")}
-
-</div>`;
-});
-}
-
-/* TAREAS */
-function agregarTarea(){
-let t = tareaInput.value;
-let f = fechaInput.value;
-if(!t||!f) return;
-
-tareas.push({texto:t,fecha:f,hecho:false});
-guardar();
-renderTareas();
-}
-
-function toggleTarea(i){
-tareas[i].hecho=!tareas[i].hecho;
-guardar();
-renderTareas();
-}
-
-function renderTareas(){
-listaTareas.innerHTML="";
-
-tareas.forEach((t,i)=>{
-listaTareas.innerHTML+=`
-<div class="bg-white p-3 mb-2 rounded flex justify-between">
-<div>${t.texto} <br><small>${t.fecha}</small></div>
-<button onclick="toggleTarea(${i})">✔</button>
-</div>`;
-});
-
-revisarTareasHoy();
-}
-
-/* NOTIFICACIONES */
-function activarNotificaciones(){
-Notification.requestPermission();
-}
-
-function revisarTareasHoy(){
-let hoy = new Date().toISOString().split("T")[0];
-tareas.forEach(t=>{
-if(t.fecha===hoy && !t.hecho){
-new Notification("📚 Tarea pendiente",{body:t.texto});
-}
-});
-}
-
-/* BACKUP */
-function exportarDatos(){
-let data = JSON.stringify({cursos,tareas});
-let a=document.createElement("a");
-a.href=URL.createObjectURL(new Blob([data]));
-a.download="backup.json";
-a.click();
-}
-
-function importarDatos(e){
-let file=e.target.files[0];
-let reader=new FileReader();
-reader.onload=function(ev){
-let data=JSON.parse(ev.target.result);
-cursos=data.cursos||[];
-tareas=data.tareas||[];
-guardar();
-renderCursos();
-renderTareas();
-}
-reader.readAsText(file);
-}
-
-/* DASHBOARD */
-function renderDashboard(){
-resumen.innerHTML=`
-<div class="bg-white p-4 rounded">Cursos: ${cursos.length}</div>
-<div class="bg-white p-4 rounded">Pendientes: ${tareas.filter(t=>!t.hecho).length}</div>
-`;
-}
-
-/* SAVE */
-function guardar(){
-localStorage.setItem("cursos",JSON.stringify(cursos));
-localStorage.setItem("tareas",JSON.stringify(tareas));
-}
-
-/* INSTALL BUTTON */
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt",(e)=>{
-e.preventDefault();
-deferredPrompt=e;
-installBtn.classList.remove("hidden");
-});
-
-installBtn.onclick=()=>{
-deferredPrompt.prompt();
-};
-
-/* INIT */
-renderCursos();
-renderTareas();
-renderDashboard();
-
-/* SERVICE WORKER */
-if("serviceWorker" in navigator){
-navigator.serviceWorker.register("service-worker.js?v=5");
-}
-</script>
-
+    <script>
+        function mostrar(sec) {
+            // Oculta todas las secciones
+            document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+            // Muestra la seleccionada
+            const target = document.getElementById(sec);
+            if(target) {
+                target.classList.remove("hidden");
+                // Lógica especial para limpiar el dashboard si es necesario
+                if(sec === 'dashboard' && document.getElementById("accesoDirectoCursos")) {
+                    document.getElementById("accesoDirectoCursos").classList.add("hidden");
+                }
+            }
+        }
+    </script>
 </body>
 </html>
