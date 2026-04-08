@@ -1,13 +1,13 @@
-const CACHE_NAME = "aula-mila-v2";
+const CACHE_NAME = "aula-mila-v5";
 
-self.addEventListener("install", e => {
-  self.skipWaiting(); // fuerza activación inmediata
+self.addEventListener("install", e=>{
+self.skipWaiting();
 });
 
-self.addEventListener("activate", e => {
-  e.waitUntil(self.clients.claim()); // toma control de la página
+self.addEventListener("activate", e=>{
+self.clients.claim();
 });
 
-self.addEventListener("fetch", e => {
-  e.respondWith(fetch(e.request));
+self.addEventListener("fetch", e=>{
+e.respondWith(fetch(e.request));
 });
