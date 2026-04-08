@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<title>Aula Aesthetic de Mila 💖</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  body {
+    font-family: Inter, sans-serif;
+    background: linear-gradient(135deg, #fdf2f8, #ede9fe, #f0fdf4);
+  }
+
+  .glass {
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.6);
+  }
+
+  .card {
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  }
+
+  .btn:active {
+    transform: scale(0.95);
+  }
+
+  .fade {
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from {opacity:0; transform: translateY(10px);}
+    to {opacity:1; transform: translateY(0);}
+  }
+</style>
+</head>
+
+<body class="text-gray-800">
+
+<div class="flex h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 glass p-6 hidden md:flex flex-col rounded-r-2xl">
+
+    <h1 class="text-xl font-semibold mb-10 text-pink-500">💖 Aula de Mila</h1>
+
+    <nav class="space-y-3">
+
+      <button onclick="mostrar('dashboard', this)"
+        class="nav-item w-full text-left px-4 py-2 rounded-xl bg-pink-200 text-pink-700">
+        🌸 Dashboard
+      </button>
+
+      <button onclick="mostrar('cursos', this)"
+        class="nav-item w-full text-left px-4 py-2 rounded-xl hover:bg-pink-100">
+        📚 Cursos
+      </button>
+
+      <button onclick="mostrar('tareas', this)"
+        class="nav-item w-full text-left px-4 py-2 rounded-xl hover:bg-pink-100">
+        ✅ Tareas
+      </button>
+
+    </nav>
+
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main class="flex-1 p-10 overflow-y-auto">
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="fade">
+      <h2 class="text-3xl font-bold mb-8 text-pink-500">✨ Dashboard</h2>
+      <div id="resumen" class="grid md:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- CURSOS -->
+    <section id="cursos" class="hidden">
+      <h2 class="text-3xl font-bold mb-8 text-pink-500">📚 Cursos</h2>
+
+      <div class="flex gap-3 mb-8">
+        <input id="cursoInput" placeholder="Nuevo curso ✨"
+          class="flex-1 border border-pink-200 rounded-xl px-4 py-3 bg-white/70">
+
+        <button onclick="agregarCurso()"
+          class="btn bg-pink-400 text-white px-6 rounded-xl hover:bg-pink-500 shadow">
+          Crear
+        </button>
+      </div>
+
+      <div id="listaCursos"></div>
+    </section>
+
+    <!-- TAREAS -->
+    <section id="tareas" class="hidden">
+      <h2 class="text-3xl font-bold mb-8 text-pink-500">💗 Tareas</h2>
+
+      <div class="flex gap-3 mb-8">
+        <input id="tareaInput" placeholder="Nueva tarea 💖"
+          class="flex-1 border border-pink-200 rounded-xl px-4 py-3 bg-white/70">
+
+        <input id="fechaInput" type="date"
+          class="border border-pink-200 rounded-xl px-4 py-3 bg-white/70">
+
+        <button onclick="agregarTarea()"
+          class="btn bg-pink-400 text-white px-6 rounded-xl hover:bg-pink-500 shadow">
+          Crear
+        </button>
+      </div>
+
+      <div id="listaTareas"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+let cursos = JSON.parse(localStorage.getItem("cursos")) || [];
+let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+
+/* NAV */
+function mostrar(seccion, btn){
+  ["dashboard","cursos","tareas"].forEach(id=>{
+    const el = document.getElementById(id);
+    el.classList.add("hidden");
+    el.classList.remove("fade");
+  });
+
+  const activo = document.getElementById(seccion);
+  activo.classList.remove("hidden");
+
+  setTimeout(()=> activo.classList.add("fade"), 10);
+
+  document.querySelectorAll(".nav-item").forEach(b=>{
+    b.classList.remove("bg-pink-200","text-pink-700");
+  });
+
+  btn.classList.add("bg-pink-200","text-pink-700");
+}
+
+/* CURSOS */
+function agregarCurso(){
+  const val = document.getElementById("cursoInput").value;
+  if(!val) return;
+
+  cursos.push({nombre: val, apuntes: []});
+  guardar();
+  renderCursos();
+}
+
+function agregarApunte(i){
+  const input = document.getElementById(`ap-${i}`);
+  if(!input.value) return;
+
+  cursos[i].apuntes.push(input.value);
+  guardar();
+  renderCursos();
+}
+
+function renderCursos(){
+  const cont = document.getElementById("listaCursos");
+  cont.innerHTML="";
+
+  cursos.forEach((c,i)=>{
+    cont.innerHTML+=`
+      <div class="card glass p-6 mb-5 rounded-2xl fade">
+        <h3 class="font-semibold text-lg mb-4 text-pink-500">${c.nombre}</h3>
+
+        <div class="flex gap-2 mb-4">
+          <input id="ap-${i}" placeholder="Agregar apunte ✨"
+            class="flex-1 border border-pink-200 rounded-lg px-3 py-2 bg-white/70">
+
+          <button onclick="agregarApunte(${i})"
+            class="btn bg-pink-200 text-pink-700 px-4 rounded-lg hover:bg-pink-300">
+            +
+          </button>
+        </div>
+
+        <ul class="text-gray-600 space-y-1">
+          ${c.apuntes.map(a=>`<li>• ${a}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  });
+}
+
+/* TAREAS */
+function agregarTarea(){
+  const t = document.getElementById("tareaInput").value;
+  const f = document.getElementById("fechaInput").value;
+
+  if(!t || !f) return;
+
+  tareas.push({texto:t, fecha:f, hecho:false});
+  guardar();
+  renderTareas();
+}
+
+function toggleTarea(i){
+  tareas[i].hecho = !tareas[i].hecho;
+  guardar();
+  renderTareas();
+}
+
+function renderTareas(){
+  const cont = document.getElementById("listaTareas");
+  cont.innerHTML="";
+
+  tareas.forEach((t,i)=>{
+    cont.innerHTML+=`
+      <div class="card glass p-5 mb-4 rounded-2xl flex justify-between items-center fade">
+        <div class="${t.hecho ? "line-through text-gray-400" : ""}">
+          <p class="font-medium">${t.texto}</p>
+          <span class="text-sm text-gray-500">${t.fecha}</span>
+        </div>
+
+        <button onclick="toggleTarea(${i})"
+          class="btn bg-green-100 text-green-600 px-3 py-1 rounded-lg hover:bg-green-200">
+          ✔
+        </button>
+      </div>
+    `;
+  });
+
+  renderDashboard();
+}
+
+/* DASHBOARD */
+function renderDashboard(){
+  const hoy = new Date().toISOString().split("T")[0];
+
+  document.getElementById("resumen").innerHTML=`
+    <div class="card glass p-6 rounded-2xl">
+      <p class="text-gray-600">Cursos</p>
+      <h3 class="text-3xl font-bold text-pink-500">${cursos.length}</h3>
+    </div>
+
+    <div class="card glass p-6 rounded-2xl">
+      <p class="text-gray-600">Pendientes</p>
+      <h3 class="text-3xl font-bold text-green-500">
+        ${tareas.filter(t=>!t.hecho).length}
+      </h3>
+    </div>
+
+    <div class="card glass p-6 rounded-2xl">
+      <p class="text-gray-600">Hoy</p>
+      <h3 class="text-3xl font-bold text-red-400">
+        ${tareas.filter(t=>t.fecha===hoy && !t.hecho).length}
+      </h3>
+    </div>
+  `;
+}
+
+/* GUARDAR */
+function guardar(){
+  localStorage.setItem("cursos", JSON.stringify(cursos));
+  localStorage.setItem("tareas", JSON.stringify(tareas));
+}
+
+/* INIT */
+renderCursos();
+renderTareas();
+renderDashboard();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+</body>
+</html>
