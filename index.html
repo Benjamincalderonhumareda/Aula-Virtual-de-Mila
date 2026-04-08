@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+
 <title>Aula Aesthetic de Mila 💖</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -51,7 +54,6 @@
     <h1 class="text-xl font-semibold mb-10 text-pink-500">💖 Aula de Mila</h1>
 
     <nav class="space-y-3">
-
       <button onclick="mostrar('dashboard', this)"
         class="nav-item w-full text-left px-4 py-2 rounded-xl bg-pink-200 text-pink-700">
         🌸 Dashboard
@@ -66,7 +68,6 @@
         class="nav-item w-full text-left px-4 py-2 rounded-xl hover:bg-pink-100">
         ✅ Tareas
       </button>
-
     </nav>
 
   </aside>
@@ -268,15 +269,13 @@ renderCursos();
 renderTareas();
 renderDashboard();
 </script>
+
+<!-- ✅ SERVICE WORKER CORRECTO -->
 <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
-  <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js?v=2");
 }
 </script>
+
 </body>
 </html>
