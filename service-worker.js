@@ -1,5 +1,20 @@
+const CACHE_NAME = "aula-mila-v1";
+
 self.addEventListener("install", e => {
-  console.log("App instalada");
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll([
+        "./",
+        "./index.html"
+      ]);
+    })
+  );
 });
 
-self.addEventListener("fetch", e => {});
+self.addEventListener("fetch", e => {
+  e.respondWith(
+    caches.match(e.request).then(res => {
+      return res || fetch(e.request);
+    })
+  );
+});
